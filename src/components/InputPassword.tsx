@@ -58,7 +58,7 @@ export const InputPassword = () => {
         placeholder={placeholder}
         error={error}
         handleIcon={handleShowPassword}
-        errorMessage={errorMessage}
+        message={errorMessage}
         handleOnChange={handleOnChange}
       />
       <button
