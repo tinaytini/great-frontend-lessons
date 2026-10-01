@@ -1,5 +1,6 @@
 import { Mail } from "lucide-react";
 import { InputEmail } from "../components/InputEmail";
+import { InputPassword } from "../components/InputPassword";
 
 
 export default function TextInputPage() {
@@ -16,8 +17,8 @@ export default function TextInputPage() {
       />
       <InputEmail
       active={true}
-      err={true}
       />
+      <InputPassword/>
     </div>
   )
 }

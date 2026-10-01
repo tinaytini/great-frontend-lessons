@@ -1,33 +1,43 @@
 import {
   type ChangeEvent,
   type ComponentType,
+  type HTMLInputTypeAttribute,
 } from 'react';
 
-interface InputProps {
-  type?: string;
+/**
+ * Minimal contract InputText needs from an error. Any input variant
+ * (email, password, username, ...) can define its own error type as
+ * long as it satisfies this shape — InputText never needs to change
+ * to support a new variant.
+ */
+export interface BaseInputError {
+  errorType: string;
+  errorMessage: string;
+}
+
+interface InputProps<TError extends BaseInputError = BaseInputError> {
+  type?: HTMLInputTypeAttribute;
   label: string;
   prevIcon?: ComponentType<{ className: string }>;
   icon?: ComponentType<{ className: string }>;
   placeholder?: string;
-  error?: boolean;
-  message?: string;
+  error?: TError;
   active?: boolean;
   handleIcon?: () => void;
   handleOnChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const InputText = ({
+export const InputText = <TError extends BaseInputError = BaseInputError>({
   type,
   label,
   prevIcon: LeadingIcon,
   icon: Icon,
   placeholder,
   error,
-  message,
   active,
   handleIcon,
   handleOnChange,
-}: InputProps) => {
+}: InputProps<TError>) => {
   return (
     <div className="w-80 flex flex-col gap-1.5 justify-start items-start relative">
       <label className="flex flex-col gap-1.5 self-stretch justify-start relative">
@@ -43,24 +53,24 @@ export const InputText = ({
       )}
         <input
           className={`
-            focus:outline-none 
+            focus:outline-none
             focus-visible:outline-none
-            text-neutral-900 self-stretch bg-neutral-100 py-2.5 rounded border border-solid text-sm 
-            active:border-neutral-200 
+            text-neutral-900 self-stretch bg-neutral-100 py-2.5 rounded border border-solid text-sm
+            active:border-neutral-200
             focus:border-indigo-700
             focus:ring-2
             focus:ring-indigo-100
             ${LeadingIcon ? 'px-8.5' : 'px-3.5'}
             ${active ? 'border-neutral-300 placeholder:text-neutral-400' : 'border-neutral-200 outline-neutral-100 text-neutral-100 placeholder:text-neutral-300'}
             `}
-            
+
           type={type}
           placeholder={placeholder}
           name={label.toLowerCase()}
           onChange={handleOnChange}
           required
         />
-        <div className={`text-left ${error ? 'text-red-600' : 'text-neutral-500'} text-xs `}>{message}</div>
+        <div className={`text-left ${error?.errorMessage ? 'text-red-600' : 'text-neutral-500'} text-xs `}>{error?.errorMessage}</div>
       </label>
       {Icon && (
         <div

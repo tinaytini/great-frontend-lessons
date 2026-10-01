@@ -1,13 +1,13 @@
 import { Eye, EyeClosed } from 'lucide-react';
 import { InputText } from './InputText';
+import type { InputErrorPassword } from './inputErrors';
 import { useState, type SubmitEventHandler } from 'react';
 
 export const InputPassword = () => {
-  const [showPassword, setShowPassword] = useState('password');
+  const [showPassword, setShowPassword] = useState<'password' | 'text'>('password');
   const [closedEye, setClosedEye] = useState(false);
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<InputErrorPassword>();
 
   const chars = Array.from(password);
   const hasUpperCase = chars.some((char) => /[A-Z]/.test(char));
@@ -19,17 +19,13 @@ export const InputPassword = () => {
   const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     if (!password.length) {
-      setErrorMessage('Password is required');
-      setError(true);
+      setError({ errorType: 'password', errorMessage: 'Password is required' });
     } else if (password.length < 6) {
-      setErrorMessage('Password length should be at least 6');
-      setError(true);
+      setError({ errorType: 'password', errorMessage: 'Password length should be at least 6' });
     } else if (!hasUpperCase) {
-      setErrorMessage('Password should contain upper case letters');
-      setError(true);
+      setError({ errorType: 'password', errorMessage: 'Password should contain upper case letters' });
     } else {
-      setErrorMessage('');
-      setError(false);
+      setError(undefined);
     }
   };
 
@@ -49,6 +45,7 @@ export const InputPassword = () => {
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       className="flex flex-col gap-1.5 justify-start items-start"
     >
       <InputText
@@ -58,7 +55,6 @@ export const InputPassword = () => {
         placeholder={placeholder}
         error={error}
         handleIcon={handleShowPassword}
-        message={errorMessage}
         handleOnChange={handleOnChange}
       />
       <button
